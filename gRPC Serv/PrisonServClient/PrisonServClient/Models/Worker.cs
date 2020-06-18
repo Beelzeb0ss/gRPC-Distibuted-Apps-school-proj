@@ -145,7 +145,10 @@ namespace PrisonServClient.Models
                 }
 
                 location = value;
-                LocationId = location.Id;
+                if (location != null)
+                {
+                    LocationId = location.Id;
+                }
                 OnPropertyChanged("Location");
             }
         }
