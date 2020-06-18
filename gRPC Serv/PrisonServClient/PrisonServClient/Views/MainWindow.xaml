@@ -1,0 +1,447 @@
+﻿<Window x:Class="PrisonServClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PrisonServClient"
+        xmlns:data="clr-namespace:PrisonServClient.ViewModels"
+        xmlns:models="clr-namespace:PrisonServClient.Models"
+        xmlns:validation="clr-namespace:PrisonServClient.Validation"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="The затвор" Height="450" Width="800">
+    
+    <Window.DataContext>
+        <data:MainViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type models:Location}">
+            <Label Content="{Binding Name}"/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type models:Job}">
+            <Label Content="{Binding Title}"/>
+        </DataTemplate>
+
+        <ControlTemplate x:Key="validationTemplate">
+            <DockPanel>
+                <TextBlock Foreground="Red" FontSize="20">!</TextBlock>
+                <AdornedElementPlaceholder/>
+            </DockPanel>
+        </ControlTemplate>
+
+        <Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip"
+                        Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                        Path=(Validation.Errors)/ErrorContent}"/>
+                    <Setter Property="Background"
+                        Value="Red"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <DataTemplate x:Key="OverviewLocTmp" DataType="{x:Type models:Location}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Rectangle Stroke="Black" Height="100" Width="100" Fill="DarkGray" Grid.RowSpan="3"/>
+                <Label FontSize="16" Grid.Row="0" Content="{Binding Name}"/>
+                <Label FontSize="16" Foreground="DarkRed" Grid.Row="1" Content="{Binding PrisonersInLocation}"/>
+                <Label FontSize="16" Foreground="DarkBlue" Grid.Row="2" Content="{Binding WorkersInLocation}"/>
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+    
+    <Grid>
+        <TabControl>
+            <TabItem Header="Overview">
+                <ItemsControl ItemTemplate="{StaticResource OverviewLocTmp}" ItemsSource="{Binding LocationsVM.Locations}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Background="DarkSeaGreen" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter
+                                Property="Canvas.Left"
+                                Value="{Binding PosX}"
+                                />
+                            <Setter
+                                Property="Canvas.Top"
+                                Value="120"
+                                />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+            </TabItem>
+            <TabItem Header="Prisoners">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="4*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="4*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Button Command="{Binding PrisonersVM.NewPrisonerCommand}" Margin="10" Content="New Prisoner" Grid.Column="0"/>
+                        <Button Command="{Binding PrisonersVM.SavePrisonerCommand}" Visibility="{Binding PrisonersVM.EditPrisonerVisibility}" Margin="10" Content="Save Prisoner" Grid.Column="1"/>
+                        <Button Command="{Binding PrisonersVM.RemovePrisonerCommand}" Visibility="{Binding PrisonersVM.EditPrisonerVisibility}" Margin="10" Content="Remove Prisoner" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid Visibility="{Binding PrisonersVM.EditPrisonerVisibility}" Grid.Column="0" Grid.Row="1" Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="1" Grid.Column="0" Content="First Name"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" 
+                            Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                            Style="{StaticResource textBoxInError}">
+                            <Binding Path="PrisonersVM.SelectedPrisoner.FName" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:StringLengthValidationRule Max="50"/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox>
+
+                        <Label Grid.Row="2" Grid.Column="0" Content="Last Name"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                            Style="{StaticResource textBoxInError}">
+                            <Binding Path="PrisonersVM.SelectedPrisoner.LName" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:StringLengthValidationRule Max="50"/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox>
+
+                        <Label Grid.Row="3" Grid.Column="0" Content="Age"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding PrisonersVM.SelectedPrisoner.Age, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <Label Grid.Row="4" Grid.Column="0" Content="Sentenced On"/>
+                        <xctk:DateTimePicker Grid.Row="4" Grid.Column="1" Value="{Binding PrisonersVM.SelectedPrisoner.SentencedOn}"/>
+
+                        <Label Grid.Row="5" Grid.Column="0" Content="Release Date"/>
+                        <xctk:DateTimePicker Grid.Row="5" Grid.Column="1" Value="{Binding PrisonersVM.SelectedPrisoner.ReleaseDate}"/>
+
+                        <Label Grid.Row="6" Grid.Column="0" Content="Location"/>
+                        <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding LocationsVM.Locations}" SelectedItem="{Binding PrisonersVM.SelectedPrisoner.Location, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+
+                    <Grid Margin="10" Grid.Row="3" Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Last Name"/>
+                        <TextBox x:Name="PrisonerSearchText" Grid.Row="0" Grid.Column="1"/>
+                        <Button Content="Search" Command="{Binding PrisonersVM.SearchPrisonersCommand}" CommandParameter="{Binding ElementName=PrisonerSearchText}" Grid.Row="1" Grid.ColumnSpan="2"/>
+                    </Grid>
+                    
+                    <DataGrid ItemsSource="{Binding PrisonersVM.Prisoners}" SelectedItem="{Binding PrisonersVM.SelectedPrisoner}" CanUserAddRows="False" IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="First Name" Binding="{Binding FName}"/>
+                            <DataGridTextColumn Header="Last Name" Binding="{Binding LName}"/>
+                            <DataGridTextColumn Header="Age" Binding="{Binding Age}"/>
+                            <DataGridTextColumn Header="Sentenced On" Binding="{Binding SentencedOn}"/>
+                            <DataGridTextColumn Header="Release Date" Binding="{Binding ReleaseDate}"/>
+                            <DataGridTextColumn Header="Location" Binding="{Binding Location.Name}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            </Style>
+                        </DataGrid.CellStyle>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Prison Workers">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="4*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="4*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Command="{Binding WorkersVM.NewWorkerCommand}" Margin="10" Content="New Worker" Grid.Column="0"/>
+                        <Button Command="{Binding WorkersVM.SaveWorkerCommand}" Visibility="{Binding WorkersVM.EditWorkerVisibility}" Margin="10" Content="Save Worker" Grid.Column="1"/>
+                        <Button Command="{Binding WorkersVM.RemoveWorkerCommand}" Visibility="{Binding WorkersVM.EditWorkerVisibility}" Margin="10" Content="Remove Worker" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid Margin="10" Visibility="{Binding WorkersVM.EditWorkerVisibility}" Grid.Column="0" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="1" Grid.Column="0" Content="First Name"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                            Style="{StaticResource textBoxInError}">
+                            <Binding Path="WorkersVM.SelectedWorker.FName" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:StringLengthValidationRule Max="50"/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox>
+                        <Label Grid.Row="2" Grid.Column="0" Content="Last Name"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                            Style="{StaticResource textBoxInError}">
+                            <Binding Path="WorkersVM.SelectedWorker.LName" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:StringLengthValidationRule Max="50"/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox>
+                        <Label Grid.Row="3" Grid.Column="0" Content="Job"/>
+                        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding JobsVM.Jobs}" SelectedItem="{Binding WorkersVM.SelectedWorker.Job, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Row="4" Grid.Column="0" Content="Location"/>
+                        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding LocationsVM.Locations}" SelectedItem="{Binding WorkersVM.SelectedWorker.Location, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+
+                    <DataGrid ItemsSource="{Binding WorkersVM.Workers}" SelectedItem="{Binding WorkersVM.SelectedWorker}" IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="First Name" Binding="{Binding FName}"/>
+                            <DataGridTextColumn Header="Last Name" Binding="{Binding LName}"/>
+                            <DataGridTextColumn Header="Job" Binding="{Binding Job.Title}"/>
+                            <DataGridTextColumn Header="Location" Binding="{Binding Location.Name}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            </Style>
+                        </DataGrid.CellStyle>
+                    </DataGrid>
+
+                    <Grid Margin="10" Grid.Row="3" Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Last Name"/>
+                        <TextBox x:Name="WorkerSearchText" Grid.Row="0" Grid.Column="1"/>
+                        <Button Content="Search" Command="{Binding WorkersVM.SearchWorkersCommand}" CommandParameter="{Binding ElementName=WorkerSearchText}" Grid.Row="1" Grid.ColumnSpan="2"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Locations">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="4*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="4*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Command="{Binding LocationsVM.NewLocationCommand}" Margin="10" Content="New Location" Grid.Column="0"/>
+                        <Button Command="{Binding LocationsVM.SaveLocationCommand}" Visibility="{Binding LocationsVM.EditLocationVisibility}" Margin="10" Content="Save Location" Grid.Column="1"/>
+                        <Button Command="{Binding LocationsVM.RemoveLocationCommand}" Visibility="{Binding LocationsVM.EditLocationVisibility}" Margin="10" Content="Remove Location" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid Margin="10" Visibility="{Binding LocationsVM.EditLocationVisibility}" Grid.Column="0" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="1" Grid.Column="0" Content="Locataion Name"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                            Style="{StaticResource textBoxInError}">
+                            <Binding Path="LocationsVM.SelectedLocation.Name" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:StringLengthValidationRule Max="50"/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox>
+                    </Grid>
+
+                    <DataGrid ItemsSource="{Binding LocationsVM.Locations}" SelectedItem="{Binding LocationsVM.SelectedLocation}" IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Location" Binding="{Binding Name}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            </Style>
+                        </DataGrid.CellStyle>
+                    </DataGrid>
+
+                    <Grid Margin="10" Grid.Row="3" Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Last Name"/>
+                        <TextBox x:Name="LocationSearchText" Grid.Row="0" Grid.Column="1"/>
+                        <Button Content="Search" Command="{Binding LocationsVM.SearchLocationsCommand}" CommandParameter="{Binding ElementName=LocationSearchText}" Grid.Row="1" Grid.ColumnSpan="2"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Jobs">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="4*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="4*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Command="{Binding JobsVM.NewJobCommand}" Margin="10" Content="New Job" Grid.Column="0"/>
+                        <Button Command="{Binding JobsVM.SaveJobCommand}" Visibility="{Binding JobsVM.EditJobVisibility}" Margin="10" Content="Save Job" Grid.Column="1"/>
+                        <Button Command="{Binding JobsVM.RemoveJobCommand}" Visibility="{Binding JobsVM.EditJobVisibility}" Margin="10" Content="Remove Job" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid Margin="10" Visibility="{Binding JobsVM.EditJobVisibility}" Grid.Column="0" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="1" Grid.Column="0" Content="Job Title"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                            Style="{StaticResource textBoxInError}">
+                            <Binding Path="JobsVM.SelectedJob.Title" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:StringLengthValidationRule Max="50"/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox>
+                    </Grid>
+
+                    <DataGrid ItemsSource="{Binding JobsVM.Jobs}" SelectedItem="{Binding JobsVM.SelectedJob}" IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Title" Binding="{Binding Title}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            </Style>
+                        </DataGrid.CellStyle>
+                    </DataGrid>
+
+                    <Grid Margin="10" Grid.Row="3" Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Last Name"/>
+                        <TextBox x:Name="JobSearchText" Grid.Row="0" Grid.Column="1"/>
+                        <Button Content="Search" Command="{Binding JobsVM.SearchJobsCommand}" CommandParameter="{Binding ElementName=JobSearchText}" Grid.Row="1" Grid.ColumnSpan="2"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

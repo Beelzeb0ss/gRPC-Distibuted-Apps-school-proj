@@ -1,0 +1,9 @@
+C:\Stuff\CS ASP\gRPC Serv\PrisonServClient\GrpcClient\bin\Debug\netcoreapp3.1\GrpcClient.deps.json
+C:\Stuff\CS ASP\gRPC Serv\PrisonServClient\GrpcClient\bin\Debug\netcoreapp3.1\GrpcClient.dll
+C:\Stuff\CS ASP\gRPC Serv\PrisonServClient\GrpcClient\bin\Debug\netcoreapp3.1\GrpcClient.pdb
+C:\Stuff\CS ASP\gRPC Serv\PrisonServClient\GrpcClient\obj\Debug\netcoreapp3.1\GrpcClient.csprojAssemblyReference.cache
+C:\Stuff\CS ASP\gRPC Serv\PrisonServClient\GrpcClient\obj\Debug\netcoreapp3.1\GrpcClient.AssemblyInfoInputs.cache
+C:\Stuff\CS ASP\gRPC Serv\PrisonServClient\GrpcClient\obj\Debug\netcoreapp3.1\GrpcClient.AssemblyInfo.cs
+C:\Stuff\CS ASP\gRPC Serv\PrisonServClient\GrpcClient\obj\Debug\netcoreapp3.1\GrpcClient.dll
+C:\Stuff\CS ASP\gRPC Serv\PrisonServClient\GrpcClient\obj\Debug\netcoreapp3.1\GrpcClient.pdb
+C:\Stuff\CS ASP\gRPC Serv\PrisonServClient\GrpcClient\obj\Debug\netcoreapp3.1\GrpcClient.csproj.CoreCompileInputs.cache
