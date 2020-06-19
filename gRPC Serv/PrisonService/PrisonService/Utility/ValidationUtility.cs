@@ -17,12 +17,20 @@ namespace PrisonService.Utility
             {
                 return false;
             }
+            if (String.IsNullOrEmpty(job.Title))
+            {
+                return false;
+            }
             return true;
         }
 
         public static bool IsLocationValid(Location loc)
         {
             if(loc.Name.Length > maxTextLen)
+            {
+                return false;
+            }
+            if (String.IsNullOrEmpty(loc.Name))
             {
                 return false;
             }
@@ -35,12 +43,20 @@ namespace PrisonService.Utility
             {
                 return false;
             }
+            if(String.IsNullOrEmpty(p.FName) || String.IsNullOrEmpty(p.LName) || p.ReleaseDate == null || p.SentenceDate == null)
+            {
+                return false;
+            }
             return true;
         }
 
         public static bool IsWorkerValid(Worker w)
         {
-            if(w.FName.Length > maxTextLen || w.LName.Length > maxTextLen)
+            if (w.FName.Length > maxTextLen || w.LName.Length > maxTextLen)
+            {
+                return false;
+            }
+            if (String.IsNullOrEmpty(w.FName) || String.IsNullOrEmpty(w.LName))
             {
                 return false;
             }

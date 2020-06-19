@@ -107,7 +107,10 @@ namespace PrisonServClient.Models
                 }
 
                 job = value;
-                JobId = job.Id;
+                if (job != null)
+                {
+                    JobId = job.Id;
+                }
                 OnPropertyChanged("Job");
             }
         }

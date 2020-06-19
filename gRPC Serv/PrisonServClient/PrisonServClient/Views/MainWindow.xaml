@@ -128,7 +128,7 @@
                             Style="{StaticResource textBoxInError}">
                             <Binding Path="PrisonersVM.SelectedPrisoner.FName" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
-                                    <validation:StringLengthValidationRule Max="50"/>
+                                    <validation:StringLengthValidationRule Min="1" Max="50"/>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox>
@@ -138,7 +138,7 @@
                             Style="{StaticResource textBoxInError}">
                             <Binding Path="PrisonersVM.SelectedPrisoner.LName" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
-                                    <validation:StringLengthValidationRule Max="50"/>
+                                    <validation:StringLengthValidationRule Min="1" Max="50"/>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox>
@@ -234,7 +234,7 @@
                             Style="{StaticResource textBoxInError}">
                             <Binding Path="WorkersVM.SelectedWorker.FName" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
-                                    <validation:StringLengthValidationRule Max="50"/>
+                                    <validation:StringLengthValidationRule Min="1" Max="50"/>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox>
@@ -243,7 +243,7 @@
                             Style="{StaticResource textBoxInError}">
                             <Binding Path="WorkersVM.SelectedWorker.LName" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
-                                    <validation:StringLengthValidationRule Max="50"/>
+                                    <validation:StringLengthValidationRule Min="1" Max="50"/>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox>
@@ -329,7 +329,7 @@
                             Style="{StaticResource textBoxInError}">
                             <Binding Path="LocationsVM.SelectedLocation.Name" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
-                                    <validation:StringLengthValidationRule Max="50"/>
+                                    <validation:StringLengthValidationRule Min="1" Max="50"/>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox>
@@ -408,7 +408,7 @@
                             Style="{StaticResource textBoxInError}">
                             <Binding Path="JobsVM.SelectedJob.Title" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
-                                    <validation:StringLengthValidationRule Max="50"/>
+                                    <validation:StringLengthValidationRule Min="1" Max="50"/>
                                 </Binding.ValidationRules>
                             </Binding>
                         </TextBox>

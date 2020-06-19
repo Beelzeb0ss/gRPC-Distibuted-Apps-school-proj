@@ -8,6 +8,7 @@ namespace PrisonServClient.Validation
 {
     class StringLengthValidationRule : ValidationRule
     {
+        public int Min { get; set; }
         public int Max { get; set; }
 
         public StringLengthValidationRule()
@@ -18,7 +19,7 @@ namespace PrisonServClient.Validation
         {
             string text = (string)value;
 
-            if (text.Length > Max)
+            if (text.Length > Max || text.Length < Min)
             {
                 return new ValidationResult(false, $"Max lenght: {Max}!");
             }
